@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\FoodGappBackend_WebAPI.props" />
+</Project>
