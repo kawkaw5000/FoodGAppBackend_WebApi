@@ -24,9 +24,9 @@ namespace FoodGappBackend_WebAPI.Controllers
         {
             try
             {
-                if (_userMgr.SignIn(ul.UserEmail, ul.UserPassword, ref ErrorMessage) == ErrorCode.Success)
+                if (_userMgr.SignIn(ul.Email, ul.Password, ref ErrorMessage) == ErrorCode.Success)
                 {
-                    var user = _userMgr.GetUserByEmail(ul.UserEmail);
+                    var user = _userMgr.GetUserByEmail(ul.Email);
                     if (user == null)
                     {
                         return BadRequest("User not found.");
