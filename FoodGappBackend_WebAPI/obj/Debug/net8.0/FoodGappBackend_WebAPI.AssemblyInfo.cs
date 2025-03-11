@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("FoodGappBackend_WebAPI")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5d3ed04a019185a5aa3f586d9b3373b1faecfece")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3ce88e99bdc9e67b0001ed006deb4da7d4b94e63")]
 [assembly: System.Reflection.AssemblyProductAttribute("FoodGappBackend_WebAPI")]
 [assembly: System.Reflection.AssemblyTitleAttribute("FoodGappBackend_WebAPI")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

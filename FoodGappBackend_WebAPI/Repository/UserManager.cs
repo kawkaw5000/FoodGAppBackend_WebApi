@@ -6,12 +6,14 @@ namespace FoodGappBackend_WebAPI.Repository
     public class UserManager
     {
         private readonly BaseRepository<User> _userRepo;
-        private readonly BaseRepository<Role> _userRole;
+        private readonly BaseRepository<Role> _role;
+        private readonly BaseRepository<UserRole> _userRole;
 
         public UserManager()
         {
             _userRepo = new BaseRepository<User>();
-            _userRole = new BaseRepository<Role>();
+            _role = new BaseRepository<Role>();
+            _userRole = new BaseRepository<UserRole>();
         }
 
         // Get User By UserId
@@ -62,6 +64,25 @@ namespace FoodGappBackend_WebAPI.Repository
             return ErrorCode.Success;
         }
 
+        public ErrorCode CreateRole (Role r, ref string errMsg)
+        {
+            if (_role.Create(r, out errMsg) != ErrorCode.Success)
+            {
+                return ErrorCode.Error;
+            }
+
+            return ErrorCode.Success;
+        }
+
+        public ErrorCode CreateUserRole(UserRole ur, ref string errMsg)
+        {
+            if(_userRole.Create(ur, out errMsg) != ErrorCode.Success)
+            {
+                return ErrorCode.Error;
+            }
+
+            return ErrorCode.Success;
+        }
 
     }
 }

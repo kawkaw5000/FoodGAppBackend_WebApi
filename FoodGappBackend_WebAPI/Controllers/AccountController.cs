@@ -22,32 +22,83 @@ namespace FoodGappBackend_WebAPI.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] CustomUserLogin ul)
         {
-            if (_userMgr.SignIn(ul.UserEmail, ul.UserPassword, ref ErrorMessage) == ErrorCode.Success)
+            try
             {
-                var user = _userMgr.GetUserByEmail(ul.UserEmail);
-                if (user == null)
+                if (_userMgr.SignIn(ul.UserEmail, ul.UserPassword, ref ErrorMessage) == ErrorCode.Success)
                 {
-                    return BadRequest("User not found.");
+                    var user = _userMgr.GetUserByEmail(ul.UserEmail);
+                    if (user == null)
+                    {
+                        return BadRequest("User not found.");
+                    }
+
+                    var claims = new List<Claim>
+                    {
+                        new Claim(ClaimTypes.NameIdentifier, user.Email),
+                        new Claim(ClaimTypes.Name, user.UserId.ToString()),
+                    };
+
+                    var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                    var properties = new AuthenticationProperties
+                    {
+                        AllowRefresh = true,
+                        IsPersistent = true,
+                    };
+
+                    await HttpContext.SignInAsync(
+                        CookieAuthenticationDefaults.AuthenticationScheme,
+                        new ClaimsPrincipal(identity),
+                        properties
+                    );
+
+                    return Ok(new { message = "Login successful" });
                 }
 
-                var claims = new List<Claim>
-                {
-                    new Claim(ClaimTypes.NameIdentifier, user.Email),
-                    new Claim(ClaimTypes.Name, user.UserId.ToString()),
-                };
-
-                var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                var properties = new AuthenticationProperties
-                {
-                    AllowRefresh = true,
-                    IsPersistent = true,
-                };
-
-                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identity), properties);
-                return Ok(new { message = "Login successful" });
+                return BadRequest(new { error = "Invalid login credentials" });
             }
-
-            return BadRequest(new { error = "Invalid login credentials" });
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error during login: {ex.Message}");
+                return StatusCode(500, new { error = "An unexpected error occurred. Please try again later." });
+            }
         }
+
+
+        [HttpPost("register")]
+        public IActionResult Register([FromBody] User user)
+        {
+            try
+            {
+                if (_userMgr.SignUp(user, ref ErrorMessage) == ErrorCode.Success)
+                {
+                    var role = _roleRepo.GetAll().FirstOrDefault(r => r.RoleName == "User");
+
+                    if (role == null)
+                    {
+                        return BadRequest(new { error = "Role 'User' not found" });
+                    }
+
+                    var userRole = new UserRole
+                    {
+                        UserId = user.UserId,
+                        RoleId = role.RoleId
+                    };
+
+                    if (_userRoleRepo.Create(userRole, out ErrorMessage) == ErrorCode.Success)
+                    {
+                        return Ok(new { message = "Registration successful" });
+                    }
+
+                    return BadRequest(new { error = "Failed to assign user role", details = ErrorMessage });
+                }
+
+                return BadRequest(new { error = "Account registration failed", details = ErrorMessage });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = "An unexpected error occurred", details = ex.Message });
+            }
+        }
+
     }
 }
