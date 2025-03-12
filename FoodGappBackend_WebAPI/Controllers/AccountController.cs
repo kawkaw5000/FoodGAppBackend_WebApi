@@ -19,6 +19,11 @@ namespace FoodGappBackend_WebAPI.Controllers
             _webHostEnvironment = webHostEnvironment;
         }
 
+        /// <summary>
+        /// Authenticate register user
+        /// </summary>
+        /// <param name="ul"></param>
+        /// <returns>User claims cookies for registered user</returns>
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] CustomUserLogin ul)
         {
@@ -63,7 +68,11 @@ namespace FoodGappBackend_WebAPI.Controllers
             }
         }
 
-
+        /// <summary>
+        /// Register User with role as User role
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns>Successfully Registered</returns>
         [HttpPost("register")]
         public IActionResult Register([FromBody] User user)
         {

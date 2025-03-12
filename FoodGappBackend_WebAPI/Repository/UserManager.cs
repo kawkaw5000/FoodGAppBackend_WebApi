@@ -17,17 +17,34 @@ namespace FoodGappBackend_WebAPI.Repository
         }
 
         // Get User By UserId
+        /// <summary>
+        /// Get User acc by UserId
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns>UserId</returns>
         public User GetUserById(int userId)
         {
             return _userRepo.Get(userId);
         }  
         // Get User by Email
+        /// <summary>
+        /// Get User account using Email
+        /// </summary>
+        /// <param name="email"></param>
+        /// <returns>True</returns>
         public User GetUserByEmail(string email)
         {
             return _userRepo._table.Where(e => e.Email == email).FirstOrDefault();
         }
 
-        // SignIn Register user
+        // SignIn user
+        /// <summary>
+        /// Check the Email and Password match from the database
+        /// </summary>
+        /// <param name="email"></param>
+        /// <param name="password"></param>
+        /// <param name="errMsg"></param>
+        /// <returns>Success if matched, and Invalid if its not existed</returns>
         public ErrorCode SignIn(string email, string password, ref string errMsg)
         {
             var userSignIn = GetUserByEmail(email);
@@ -48,6 +65,12 @@ namespace FoodGappBackend_WebAPI.Repository
         }
 
         // Create or Register Account
+        /// <summary>
+        /// Create Query to add new user to database
+        /// </summary>
+        /// <param name="u"></param>
+        /// <param name="errMsg"></param>
+        /// <returns>Success if the Email is not already existed</returns>
         public ErrorCode SignUp(User u, ref string errMsg)
         {
             if (GetUserByEmail(u.Email) != null)
@@ -57,26 +80,6 @@ namespace FoodGappBackend_WebAPI.Repository
             }
 
             if (_userRepo.Create(u, out errMsg) != ErrorCode.Success)
-            {
-                return ErrorCode.Error;
-            }
-
-            return ErrorCode.Success;
-        }
-
-        public ErrorCode CreateRole (Role r, ref string errMsg)
-        {
-            if (_role.Create(r, out errMsg) != ErrorCode.Success)
-            {
-                return ErrorCode.Error;
-            }
-
-            return ErrorCode.Success;
-        }
-
-        public ErrorCode CreateUserRole(UserRole ur, ref string errMsg)
-        {
-            if(_userRole.Create(ur, out errMsg) != ErrorCode.Success)
             {
                 return ErrorCode.Error;
             }
