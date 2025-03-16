@@ -66,7 +66,8 @@ namespace FoodGappBackend_WebAPI.Controllers
 
                     var roleName = _userMgr.GetRoleNameByRoleId(userRole.RoleId);
 
-                    return Ok(new { message = $"Login successful. Role Name is: {roleName.RoleName}" });
+                    return Ok(new { message = "Login successful", roleName = roleName.RoleName });
+
                 }
 
                 return BadRequest(new { error = "Invalid login credentials" });
