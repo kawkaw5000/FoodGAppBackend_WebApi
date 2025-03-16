@@ -42,7 +42,7 @@ namespace FoodGappBackend_WebAPI.Controllers
                     {
                         return BadRequest(new { error = "UserRole not found." });
                     }
-
+                
                     await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
                     var claims = new List<Claim>
@@ -63,8 +63,10 @@ namespace FoodGappBackend_WebAPI.Controllers
                         new ClaimsPrincipal(identity),
                         properties
                     );
-      
-                    return Ok(new { message = $"Login successful. User ID is: {userRole.RoleId}" });
+
+                    var roleName = _userMgr.GetRoleNameByRoleId(userRole.RoleId);
+
+                    return Ok(new { message = $"Login successful. Role Name is: {roleName.RoleName}" });
                 }
 
                 return BadRequest(new { error = "Invalid login credentials" });

@@ -32,6 +32,11 @@ namespace FoodGappBackend_WebAPI.Repository
             return _userRole._table.Where(ur => ur.UserId == userId).FirstOrDefault();
         }
 
+        public Role GetRoleNameByRoleId(int? roleId)
+        {
+            return _role._table.Where(r => r.RoleId == roleId).FirstOrDefault();
+        }
+
         // Get User by Email
         /// <summary>
         /// Get User account using Email
