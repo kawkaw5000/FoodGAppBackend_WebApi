@@ -20,10 +20,10 @@ namespace FoodGappBackend_WebAPI.Controllers
         }
 
         /// <summary>
-        /// Authenticate register user
+        /// Authenticate registered user
         /// </summary>
         /// <param name="ul"></param>
-        /// <returns>User claims cookies for registered user</returns>
+        /// <returns>User claims cookies for registered user else Invalid</returns>
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] CustomUserLogin ul)
         {
@@ -72,7 +72,7 @@ namespace FoodGappBackend_WebAPI.Controllers
         /// Register User with role as User role
         /// </summary>
         /// <param name="user"></param>
-        /// <returns>Successfully Registered</returns>
+        /// <returns>Successfully Registered, Invalid if the email is already exist</returns>
         [HttpPost("register")]
         public IActionResult Register([FromBody] User user)
         {
