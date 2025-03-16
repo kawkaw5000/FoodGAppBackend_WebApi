@@ -6,3 +6,6 @@ obj/
 *.pdb
 *.cache
 *.csproj.user
+
+# Ignore Visual Studio cache files
+.vs/
