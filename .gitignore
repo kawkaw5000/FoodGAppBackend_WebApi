@@ -9,3 +9,8 @@ obj/
 
 # Ignore Visual Studio cache files
 .vs/
+
+# Ignore database files & logs
+Data/
+*.db
+*.log
