@@ -34,8 +34,16 @@ namespace FoodGappBackend_WebAPI.Controllers
                     var user = _userMgr.GetUserByEmail(ul.Email);
                     if (user == null)
                     {
-                        return BadRequest("User not found.");
+                        return BadRequest(new { error = "User not found." });
                     }
+
+                    var userRole = _userMgr.GetUsersRoleByUserId(user.UserId);
+                    if (userRole == null)
+                    {
+                        return BadRequest(new { error = "UserRole not found." });
+                    }
+
+                    await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
                     var claims = new List<Claim>
                     {
@@ -55,8 +63,8 @@ namespace FoodGappBackend_WebAPI.Controllers
                         new ClaimsPrincipal(identity),
                         properties
                     );
-
-                    return Ok(new { message = "Login successful" });
+      
+                    return Ok(new { message = $"Login successful. User ID is: {userRole.RoleId}" });
                 }
 
                 return BadRequest(new { error = "Invalid login credentials" });

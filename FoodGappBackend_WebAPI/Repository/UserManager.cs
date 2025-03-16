@@ -26,6 +26,12 @@ namespace FoodGappBackend_WebAPI.Repository
         {
             return _userRepo.Get(userId);
         }  
+
+        public UserRole GetUsersRoleByUserId(int userId)
+        {
+            return _userRole._table.Where(ur => ur.UserId == userId).FirstOrDefault();
+        }
+
         // Get User by Email
         /// <summary>
         /// Get User account using Email
@@ -60,7 +66,7 @@ namespace FoodGappBackend_WebAPI.Repository
                 return ErrorCode.Error;
             }
 
-            errMsg = "Login Successful";
+            errMsg = "Login Successfulss";
             return ErrorCode.Success;
         }
 
