@@ -2,7 +2,7 @@
 
 namespace FoodGappBackend_WebAPI.Controllers
 {
-    public class HealthInsightsAndAnalyticsController : Controller
+    public class HealthInsightsAndAnalyticsController : BaseController
     {
         // Health Insights and Analytics transactions
     }

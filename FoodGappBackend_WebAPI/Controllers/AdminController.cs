@@ -2,7 +2,7 @@
 
 namespace FoodGappBackend_WebAPI.Controllers
 {
-    public class AdminController : Controller
+    public class AdminController : BaseController
     {
         // Admin transactions
     }

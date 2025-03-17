@@ -2,7 +2,7 @@
 
 namespace FoodGappBackend_WebAPI.Controllers
 {
-    public class CommunityController : Controller
+    public class CommunityController : BaseController
     {
         // Community Support and Social Sharing transactions
     }
