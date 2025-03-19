@@ -20,6 +20,8 @@ public partial class FoodGappDbContext : DbContext
 
     public virtual DbSet<User> Users { get; set; }
 
+    public virtual DbSet<UserInfo> UserInfos { get; set; }
+
     public virtual DbSet<UserRole> UserRoles { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -28,6 +30,50 @@ public partial class FoodGappDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<Role>(entity =>
+        {
+            entity.ToTable("Role");
+
+            entity.Property(e => e.RoleName).HasMaxLength(100);
+        });
+
+        modelBuilder.Entity<User>(entity =>
+        {
+            entity.ToTable("User");
+
+            entity.Property(e => e.Email).HasMaxLength(100);
+            entity.Property(e => e.Password).HasMaxLength(100);
+        });
+
+        modelBuilder.Entity<UserInfo>(entity =>
+        {
+            entity.ToTable("UserInfo");
+
+            entity.HasOne(d => d.User).WithMany(p => p.UserInfos)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK_UserInfo_User");
+        });
+
+        modelBuilder.Entity<UserRole>(entity =>
+        {
+            entity.HasKey(e => e.UserRole1);
+
+            entity.ToTable("UserRole");
+
+            entity.Property(e => e.UserRole1).HasColumnName("UserRole");
+
+            entity.HasOne(d => d.Role).WithMany(p => p.UserRoles)
+                .HasForeignKey(d => d.RoleId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK_UserRole_Role");
+
+            entity.HasOne(d => d.User).WithMany(p => p.UserRoles)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK_UserRole_User");
+        });
+
         OnModelCreatingPartial(modelBuilder);
     }
 
