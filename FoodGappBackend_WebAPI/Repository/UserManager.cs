@@ -16,12 +16,6 @@ namespace FoodGappBackend_WebAPI.Repository
             _userRole = new BaseRepository<UserRole>();
         }
 
-        // Get User By UserId
-        /// <summary>
-        /// Get User acc by UserId
-        /// </summary>
-        /// <param name="userId"></param>
-        /// <returns>UserId</returns>
         public User GetUserById(int userId)
         {
             return _userRepo.Get(userId);
@@ -37,25 +31,11 @@ namespace FoodGappBackend_WebAPI.Repository
             return _role._table.Where(r => r.RoleId == roleId).FirstOrDefault();
         }
 
-        // Get User by Email
-        /// <summary>
-        /// Get User account using Email
-        /// </summary>
-        /// <param name="email"></param>
-        /// <returns>True</returns>
         public User GetUserByEmail(string email)
         {
             return _userRepo._table.Where(e => e.Email == email).FirstOrDefault();
         }
 
-        // SignIn user
-        /// <summary>
-        /// Check the Email and Password match from the database
-        /// </summary>
-        /// <param name="email"></param>
-        /// <param name="password"></param>
-        /// <param name="errMsg"></param>
-        /// <returns>Success if matched, and Invalid if its not existed</returns>
         public ErrorCode SignIn(string email, string password, ref string errMsg)
         {
             var userSignIn = GetUserByEmail(email);
@@ -75,13 +55,6 @@ namespace FoodGappBackend_WebAPI.Repository
             return ErrorCode.Success;
         }
 
-        // Create or Register Account
-        /// <summary>
-        /// Create Query to add new user to database
-        /// </summary>
-        /// <param name="u"></param>
-        /// <param name="errMsg"></param>
-        /// <returns>Success if the Email is not already existed</returns>
         public ErrorCode SignUp(User u, ref string errMsg)
         {
             if (GetUserByEmail(u.Email) != null)
@@ -98,5 +71,22 @@ namespace FoodGappBackend_WebAPI.Repository
             return ErrorCode.Success;
         }
 
+        public ErrorCode UpdateUser(User u, ref string errMsg)
+        {
+            if(_userRepo.Update(u.UserId, u, out errMsg) != ErrorCode.Success)
+            {
+                return ErrorCode.Error;
+            }
+            return ErrorCode.Success;
+        }
+
+        public ErrorCode DeleteUser(int id, ref string errMsg)
+        {
+            if(_userRepo.Delete(id, out errMsg) != ErrorCode.Success)
+            {
+                return ErrorCode.Error;
+            }
+            return ErrorCode.Success;
+        }
     }
 }

@@ -19,11 +19,6 @@ namespace FoodGappBackend_WebAPI.Controllers
             _webHostEnvironment = webHostEnvironment;
         }
 
-        /// <summary>
-        /// Authenticate registered user
-        /// </summary> Testing
-        /// <param name="ul"></param>
-        /// <returns>User claims cookies for registered user else Invalid</returns>
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] CustomUserLogin ul)
         {
@@ -79,17 +74,12 @@ namespace FoodGappBackend_WebAPI.Controllers
             }
         }
 
-        /// <summary>
-        /// Register User with role as User role
-        /// </summary>
-        /// <param name="user"></param>
-        /// <returns>Successfully Registered, Invalid if the email is already exist</returns>
         [HttpPost("register")]
         public IActionResult Register([FromBody] User user)
         {
             try
             {
-                if (_userMgr.SignUp(user, ref ErrorMessage) == ErrorCode.Success)
+                if (_userMgr.CreateAccount(user, ref ErrorMessage) == ErrorCode.Success)
                 {
                     var role = _roleRepo.GetAll().FirstOrDefault(r => r.RoleName == "User");
 
@@ -118,6 +108,41 @@ namespace FoodGappBackend_WebAPI.Controllers
             {
                 return StatusCode(500, new { error = "An unexpected error occurred", details = ex.Message });
             }
+        }
+
+        [HttpPost("updateAccount")]
+        public IActionResult UpdateUserAccount([FromBody] User user)
+        {
+            if(!User.Identity.IsAuthenticated)
+            {
+                return BadRequest(new { error = "User is not authenticated", details = ErrorMessage });
+            }
+
+            user.UserId = UserId;
+
+            if (_userMgr.UpdateUser(user, ref ErrorMessage) != ErrorCode.Success)
+            {
+                return BadRequest(new { error = "Updating User was failed", details = ErrorMessage });
+            }
+
+            return Ok(new { message = "Updating User successful" });
+        }
+
+        [HttpPost("deleteAccount/{id}")]
+        public IActionResult DeleteUserAccount(int id)
+        {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return BadRequest(new { error = "User is not authenticated", details = ErrorMessage });
+            }
+            var loginUser = _userMgr.GetUserById(UserId);
+
+            if(_userMgr.DeleteUser(loginUser.UserId, ref ErrorMessage) != ErrorCode.Success)
+            {
+                return BadRequest(new { error = "Deleting User was failed", details = ErrorMessage });
+            }
+
+            return Ok(new { message = "Deleting User successful" });
         }
 
     }

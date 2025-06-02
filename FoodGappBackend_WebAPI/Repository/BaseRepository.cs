@@ -1,5 +1,4 @@
 ﻿using FoodGappBackend_WebAPI.Contract;
-using FoodGappBackend_WebAPI.Data;
 using FoodGappBackend_WebAPI.Models;
 using Microsoft.EntityFrameworkCore;
 using static FoodGappBackend_WebAPI.Utils.Utilities;
