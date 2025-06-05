@@ -8,18 +8,30 @@ namespace FoodGappBackend_WebAPI.Repository
         private readonly BaseRepository<User> _userRepo;
         private readonly BaseRepository<Role> _role;
         private readonly BaseRepository<UserRole> _userRole;
+        private readonly BaseRepository<UserInfo> _userInfo;
 
         public UserManager()
         {
             _userRepo = new BaseRepository<User>();
             _role = new BaseRepository<Role>();
             _userRole = new BaseRepository<UserRole>();
+            _userInfo = new BaseRepository<UserInfo>();
         }
 
         public User GetUserById(int userId)
         {
             return _userRepo.Get(userId);
         }  
+
+        public UserInfo GetUserInfoByUserId(int userId)
+        {
+            return _userInfo._table.Where(ur => ur.UserId == userId).FirstOrDefault();
+        }
+
+        public UserInfo GetUserInfoById(int id)
+        {
+            return _userInfo.Get(id);
+        }
 
         public UserRole GetUsersRoleByUserId(int userId)
         {
@@ -55,7 +67,7 @@ namespace FoodGappBackend_WebAPI.Repository
             return ErrorCode.Success;
         }
 
-        public ErrorCode SignUp(User u, ref string errMsg)
+        public ErrorCode CreateAccount(User u, ref string errMsg)
         {
             if (GetUserByEmail(u.Email) != null)
             {
@@ -88,5 +100,39 @@ namespace FoodGappBackend_WebAPI.Repository
             }
             return ErrorCode.Success;
         }
+
+        public ErrorCode CreateUserInfo(UserInfo ui, ref string errMsg)
+        {
+            if(_userInfo.Create(ui, out errMsg) != ErrorCode.Success)
+            {
+                return ErrorCode.Error;
+            }
+
+            return ErrorCode.Success;
+        }
+
+        public ErrorCode UpdateUserInfo(UserInfo u, ref string errMsg)
+        {
+            var currentUserInfo = GetUserInfoByUserId(u.UserId.Value);
+
+            if (currentUserInfo == null)
+            {
+                errMsg = "UserId cannot be null.";
+                return ErrorCode.Error;
+            }
+
+            currentUserInfo.Age = u.Age;
+            currentUserInfo.FirstName = u.FirstName;
+            currentUserInfo.LastName = u.LastName;
+            currentUserInfo.Weight = u.Weight;
+            currentUserInfo.Height = u.Height;
+
+            if (_userInfo.Update(currentUserInfo.UserInfoId, currentUserInfo, out errMsg) != ErrorCode.Success)
+            {
+                return ErrorCode.Error;
+            }
+            return ErrorCode.Success;
+        }
+
     }
 }

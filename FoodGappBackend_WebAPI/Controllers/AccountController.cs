@@ -145,5 +145,40 @@ namespace FoodGappBackend_WebAPI.Controllers
             return Ok(new { message = "Deleting User successful" });
         }
 
+        [HttpPost("updateUserInfo")]
+        public IActionResult UpdateUserInfo([FromBody] UserInfo userInfo)
+        {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return BadRequest(new { error = "User is not authenticated", details = ErrorMessage });
+            }
+
+            userInfo.UserId = UserId;
+
+            if (_userMgr.UpdateUserInfo(userInfo, ref ErrorMessage) != ErrorCode.Success)
+            {
+                return BadRequest(new { error = "Updating User failed", details = ErrorMessage });
+            }
+
+            return Ok(new { message = "Updating User successful" });
+        }
+
+        [HttpPost("createUserInfo")]
+        public IActionResult CreateUserInfo([FromBody] UserInfo userInfo)
+        {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return BadRequest(new { error = "User is not authenticated", details = ErrorMessage });
+            }
+
+            userInfo.UserId = UserId;
+
+            if (_userMgr.CreateUserInfo(userInfo, ref ErrorMessage) != ErrorCode.Success)
+            {
+                return BadRequest(new { error = "User info updated failed", details = ErrorMessage });
+            }
+
+            return Ok(new { message = "Updating User successful" });
+        }
     }
 }
