@@ -11,6 +11,7 @@ namespace FoodGappBackend_WebAPI.Controllers
     [Route("api/[controller]")]
     public class AccountController : BaseController
     {
+
         IConfiguration _configuration;
         private readonly IWebHostEnvironment _webHostEnvironment;
         public AccountController(IConfiguration configuration, IWebHostEnvironment webHostEnvironment)
@@ -19,6 +20,7 @@ namespace FoodGappBackend_WebAPI.Controllers
             _webHostEnvironment = webHostEnvironment;
         }
 
+       
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] CustomUserLogin ul)
         {
@@ -61,7 +63,7 @@ namespace FoodGappBackend_WebAPI.Controllers
 
                     var roleName = _userMgr.GetRoleNameByRoleId(userRole.RoleId);
 
-                    return Ok(new { message = "Login successful", roleName = roleName.RoleName });
+                    return Ok(new { message = "Login successful", roleName = roleName.RoleName, userId = user.UserId });
 
                 }
 
@@ -113,9 +115,9 @@ namespace FoodGappBackend_WebAPI.Controllers
         [HttpPost("updateAccount")]
         public IActionResult UpdateUserAccount([FromBody] User user)
         {
-            if(!User.Identity.IsAuthenticated)
+            if (!User.Identity?.IsAuthenticated ?? false || UserId == 0)
             {
-                return BadRequest(new { error = "User is not authenticated", details = ErrorMessage });
+                return BadRequest(new { error = "User is not authenticated" });
             }
 
             user.UserId = UserId;
@@ -128,13 +130,50 @@ namespace FoodGappBackend_WebAPI.Controllers
             return Ok(new { message = "Updating User successful" });
         }
 
-        [HttpPost("deleteAccount/{id}")]
+        [HttpGet("userInfo")]
+        public JsonResult UserInfo()
+        {
+            if (!User.Identity?.IsAuthenticated ?? false || UserId == 0)
+            {
+                return Json(new { success = false, message = "User is not Authenticated." });
+            }
+
+            var userInfo = _userMgr.GetUserInfoByUserId(UserId);
+
+            if (userInfo == null)
+            {
+                return Json(new { success = false, message = "User not found." });
+            }
+
+            return Json(new
+            {
+                success = true,
+                data = new
+                {
+                    userInfo.Age,
+                    userInfo.Weight,
+                    userInfo.Height,
+                    userInfo.FirstName,
+                    userInfo.LastName,
+                }
+            });
+        }
+        [HttpPost("logout")]
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync();
+            return Ok(new { message = "Logout successful" });
+        }
+
+        [HttpDelete("deleteAccount")]
         public IActionResult DeleteUserAccount(int id)
         {
-            if (!User.Identity.IsAuthenticated)
+
+            if (!User.Identity?.IsAuthenticated ?? false || UserId == 0)
             {
-                return BadRequest(new { error = "User is not authenticated", details = ErrorMessage });
+                return BadRequest(new { error = "User is not authenticated" });
             }
+
             var loginUser = _userMgr.GetUserById(UserId);
 
             if(_userMgr.DeleteUser(loginUser.UserId, ref ErrorMessage) != ErrorCode.Success)
@@ -148,11 +187,12 @@ namespace FoodGappBackend_WebAPI.Controllers
         [HttpPost("updateUserInfo")]
         public IActionResult UpdateUserInfo([FromBody] UserInfo userInfo)
         {
-            if (!User.Identity.IsAuthenticated)
+            if (!User.Identity?.IsAuthenticated ?? false || UserId == 0)
             {
-                return BadRequest(new { error = "User is not authenticated", details = ErrorMessage });
+                return BadRequest(new { error = "User is not authenticated" });
             }
 
+          
             userInfo.UserId = UserId;
 
             if (_userMgr.UpdateUserInfo(userInfo, ref ErrorMessage) != ErrorCode.Success)
@@ -166,9 +206,9 @@ namespace FoodGappBackend_WebAPI.Controllers
         [HttpPost("createUserInfo")]
         public IActionResult CreateUserInfo([FromBody] UserInfo userInfo)
         {
-            if (!User.Identity.IsAuthenticated)
+            if (!User.Identity?.IsAuthenticated ?? false || UserId == 0)
             {
-                return BadRequest(new { error = "User is not authenticated", details = ErrorMessage });
+                return BadRequest(new { error = "User is not authenticated" });
             }
 
             userInfo.UserId = UserId;

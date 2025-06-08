@@ -113,25 +113,32 @@ namespace FoodGappBackend_WebAPI.Repository
 
         public ErrorCode UpdateUserInfo(UserInfo u, ref string errMsg)
         {
+
             var currentUserInfo = GetUserInfoByUserId(u.UserId.Value);
 
             if (currentUserInfo == null)
             {
-                errMsg = "UserId cannot be null.";
-                return ErrorCode.Error;
-            }
+                if (_userInfo.Create(u, out errMsg) != ErrorCode.Success)
+                {
+                    return ErrorCode.Error;
+                }
 
-            currentUserInfo.Age = u.Age;
-            currentUserInfo.FirstName = u.FirstName;
-            currentUserInfo.LastName = u.LastName;
-            currentUserInfo.Weight = u.Weight;
-            currentUserInfo.Height = u.Height;
-
-            if (_userInfo.Update(currentUserInfo.UserInfoId, currentUserInfo, out errMsg) != ErrorCode.Success)
+                return ErrorCode.Success;
+            } else
             {
-                return ErrorCode.Error;
+                currentUserInfo.Age = u.Age;
+                currentUserInfo.FirstName = u.FirstName;
+                currentUserInfo.LastName = u.LastName;
+                currentUserInfo.Weight = u.Weight;
+                currentUserInfo.Height = u.Height;
+
+                if (_userInfo.Update(currentUserInfo.UserInfoId, currentUserInfo, out errMsg) != ErrorCode.Success)
+                {
+                    return ErrorCode.Error;
+                }
             }
-            return ErrorCode.Success;
+
+                return ErrorCode.Success;
         }
 
     }
